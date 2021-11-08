@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<div class="header">
+  <h1>The US Amtrak System</h1>
+</div>
+<head>
+	<title>Amtrak In America</title>
+	<!-- the Leaflet CSS -->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" type="text/css" href="styles.css"/>
+
+	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src= "https://cdn.jsdelivr.net/npm/leaflet-legend@1.0.2/leaflet-legend.min.js"></script>
+
+  <!--CSS styles-->
+	<style>
+	   body {
+		     font-family: sans-serif;
+         max-width: 1000px;
+	       margin: auto;
+       }
+    #legend {
+		line-height: 0px;
+		background: white;
+		opacity: 0.8;
+		padding:5px 25px 5px 0px;
+	}
+	</style>
+</head>
+
+<body>
+	<!-- code where we create and name the container that holds the map -->
+	<div id="map" style="height: 600px"></div>
+
+      <p>This interactive map shows all Amtrak Stations and their rail lines  intersected with our primary highway system. There are 500 destinations one can venture to on Amtrak along approximately 21,300 miles of rail.</p><p> While our national railway system is over 100 years older than our interstate, there has been over 160,000 miles of highway poured, or more than 700% more right-of-way built for the car. However, I still believe the train is the best way to see the country. Click on the points to find out where you could travel to.</p>
+
+      <div id="legend">
+		<h3><center>Earthquake magnitude</center></h3>
+		<ul style="list-style-type:none">
+			<li>
+				<svg width="24" height="24">
+					<circle cx="12" cy="16" r="6" stroke="#1b7837" stroke-width="3" fill="#1b7837" fill-opacity=".4"/>
+				</svg>
+				<text>Train Stations</text>
+			</li>
+			<li>
+				<svg width="24" height="24">
+					<circle cx="12" cy="16" r="6" stroke="#2166ac" stroke-width="3" fill="#2166ac" fill-opacity=".4"/>
+				</svg>
+				<text>Railways</text>
+			</li>
+			<li>
+				<svg width="24" height="24">
+					<circle cx="12" cy="16" r="6" stroke="#525252" stroke-width="3" fill="#525252" fill-opacity=".4"/>
+				</svg>
+				<text>Highways</text>
+			</li>
+			</ul>
+	</div>
+	<!-- code where we build the map and its functionality -->
+	<script>
+		var mymap = L.map('map').setView([37, -99], 4);
+		var basemap = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}{r}.png', {
+			attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+		}).addTo(mymap);
+
+    // load GeoJSON from an external file and add it to the map
+    $.getJSON("AmtrakTrainStations.geojson",function(stations){
+  		    L.geoJson(stations, {
+          pointToLayer: function(feature, latlng){
+              var marker = L.circleMarker(latlng, {radius: 4, color: "#000000"});
+              marker.bindPopup(feature.properties.StationNam + "<br>" + feature.properties.Address1 + "<br>" + feature.properties.ZipCode);
+              return marker;
+  					}
+      }).addTo(mymap);
+  		});
+      $.getJSON("Amtrak_Routes.geojson",function(rail){
+      L.geoJson(rail,{
+          style: {
+            color: "#2166ac",
+            weight: 5,
+            fillColor: "yellow",
+            fillOpacity: 0.2
+     }
+  }).addTo(mymap);
+  });
+      $.getJSON("US_PrimaryHighways.geojson",function(highway){
+        L.geoJson(highway,  {
+          style: {
+            color: "#525252",
+            weight: .8,
+            fillColor: "yellow",
+            fillOpacity: 0.2
+          }
+  }).addTo(mymap);
+});
+    var Legend =  new L.Control.Legend({
+		position: 'bottomleft',
+	  });
+
+	   mymap.addControl(Legend);
+	    $(".legend-container").append( $("#legend") );
+	</script>
+</body>
+</html>
