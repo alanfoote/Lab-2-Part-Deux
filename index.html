@@ -75,7 +75,7 @@
   					}
       }).addTo(mymap);
   		});
-      $.getJSON("Amtrak_Routes.geojson",function(rail){
+      $.getJSON("Amtrak_Routes2.geojson",function(rail){
       L.geoJson(rail,{
           style: {
             color: "#2166ac",
@@ -85,7 +85,7 @@
      }
   }).addTo(mymap);
   });
-      $.getJSON("US_PrimaryHighways.geojson",function(highway){
+      $.getJSON("US_PrimaryHighways2.geojson",function(highway){
         L.geoJson(highway,  {
           style: {
             color: "#525252",
